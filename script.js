@@ -9,10 +9,25 @@ async function fetchWeather() {
     const today = data.weather[0];
     const tomorrow = data.weather[1];
 
+    // Function to get weather icon based on description
+    function getWeatherIcon(description) {
+      const desc = description.toLowerCase();
+      if (desc.includes('clear') || desc.includes('sunny')) return '☀️';
+      if (desc.includes('partly cloudy') || desc.includes('partly cloud')) return '⛅';
+      if (desc.includes('cloudy') || desc.includes('overcast')) return '☁️';
+      if (desc.includes('rain') || desc.includes('shower')) return '🌧️';
+      if (desc.includes('snow')) return '❄️';
+      if (desc.includes('thunder') || desc.includes('storm')) return '⛈️';
+      if (desc.includes('fog') || desc.includes('mist')) return '🌫️';
+      if (desc.includes('wind')) return '💨';
+      return '🌤️'; // default
+    }
+
     // Current weather
     const temp = current.temp_C;
     const condition = current.weatherDesc[0].value;
     const precip = current.precipMM;
+    const currentIcon = getWeatherIcon(condition);
 
     // Function to process hourly data
     function processHourlyData(hourlyData) {
@@ -22,6 +37,7 @@ async function fetchWeather() {
         const hourTemp = hour.tempC;
         const hourPrecip = hour.precipMM;
         const hourDesc = hour.weatherDesc[0].value;
+        const icon = getWeatherIcon(hourDesc);
 
         // Convert minutes to 12-hour format
         const hour24 = Math.floor(time / 100);
@@ -32,6 +48,7 @@ async function fetchWeather() {
         html += `
           <div class="hourly-item">
             <div class="hour-time">${timeStr}</div>
+            <div class="hour-icon">${icon}</div>
             <div class="hour-temp">${hourTemp}&deg;C</div>
             <div class="hour-precip">${hourPrecip}mm</div>
             <div class="hour-desc">${hourDesc}</div>
@@ -47,6 +64,7 @@ async function fetchWeather() {
 
     weatherContent.innerHTML = `
       <div class="current-weather">
+        <div class="current-icon">${currentIcon}</div>
         <div class="temperature">${temp}&deg;C</div>
         <div class="condition">${condition}</div>
         <div class="precipitation">Precipitation: ${precip}mm</div>

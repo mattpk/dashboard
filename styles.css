@@ -8,32 +8,39 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
   color: #333;
-  line-height: 1.6;
+  line-height: 1.4;
+  margin: 0;
+  padding: 0;
+  width: 1024px;
+  height: 600px;
+  overflow: hidden;
 }
 
 .dashboard {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 1024px;
+  height: 600px;
+  margin: 0;
+  padding: 5px;
+  box-sizing: border-box;
 }
 
 
 main {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  display: block;
+  height: 590px;
+  overflow-y: auto;
 }
 
 .weather-section {
   background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .weather-section h2 {
-  font-size: 1.5rem;
-  margin-bottom: 15px;
+  font-size: 1.2rem;
+  margin-bottom: 8px;
   color: #34495e;
 }
 
@@ -48,81 +55,97 @@ main {
 
 .current-weather {
   text-align: center;
-  margin-bottom: 20px;
-  padding: 15px;
+  margin-bottom: 10px;
+  padding: 6px;
   background: #f8f9fa;
-  border-radius: 10px;
+  height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.current-icon {
+  font-size: 2.5rem;
+  margin-bottom: 2px;
 }
 
 .temperature {
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
   color: #2c3e50;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
 }
 
 .condition {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
   color: #34495e;
   text-transform: capitalize;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
 }
 
 .precipitation {
-  font-size: 1rem;
+  font-size: 0.8rem;
   color: #7f8c8d;
   font-weight: bold;
 }
 
 .hourly-forecast {
-  margin-bottom: 30px;
+  margin-bottom: 8px;
 }
 
 .hourly-forecast h3 {
-  font-size: 1.3rem;
+  font-size: 1rem;
   color: #2c3e50;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
   text-align: center;
 }
 
 .hourly-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 10px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 3px;
+  margin-bottom: 5px;
 }
 
 .hourly-item {
   background: white;
-  border-radius: 8px;
-  padding: 10px;
+  padding: 3px;
   text-align: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   border: 1px solid #e9ecef;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .hour-time {
   font-weight: bold;
   color: #2c3e50;
-  font-size: 0.9rem;
-  margin-bottom: 5px;
+  font-size: 0.7rem;
+  margin-bottom: 1px;
+}
+
+.hour-icon {
+  font-size: 1.2rem;
+  margin-bottom: 1px;
 }
 
 .hour-temp {
-  font-size: 1.2rem;
+  font-size: 0.8rem;
   font-weight: bold;
   color: #e74c3c;
-  margin-bottom: 3px;
+  margin-bottom: 1px;
 }
 
 .hour-precip {
-  font-size: 0.9rem;
+  font-size: 0.7rem;
   color: #3498db;
   font-weight: bold;
-  margin-bottom: 3px;
+  margin-bottom: 1px;
 }
 
 .hour-desc {
-  font-size: 0.8rem;
+  font-size: 0.6rem;
   color: #7f8c8d;
   text-transform: capitalize;
 }
@@ -133,22 +156,4 @@ main {
   text-align: center;
 }
 
-/* Tablet responsive adjustments */
-@media (max-width: 768px) {
-  .dashboard {
-    padding: 15px;
-  }
-
-  header h1 {
-    font-size: 2rem;
-  }
-
-  main {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .weather-section {
-    padding: 15px;
-  }
-}
+/* Optimized for 1024x600 tablet - no responsive design needed */
