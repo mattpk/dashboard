@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="dashboard">
+    <header>
+      <h1>Dashboard</h1>
+    </header>
+
+    <main>
+      <section class="weather-section">
+        <h2>Weather - Toronto</h2>
+        <div class="weather-content">
+          <div class="loading">Loading weather data...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Fetch weather data for Toronto using wttr.in
+    async function fetchWeather() {
+      try {
+        const response = await fetch('https://wttr.in/Toronto?format=j1');
+        const data = await response.json();
+
+        const weatherContent = document.querySelector('.weather-content');
+        const current = data.current_condition[0];
+
+        const temp = current.temp_C;
+        const feelsLike = current.FeelsLikeC;
+        const condition = current.weatherDesc[0].value;
+        const humidity = current.humidity;
+        const windSpeed = current.windspeedKmph;
+        const windDir = current.winddir16Point;
+        const pressure = current.pressure;
+        const visibility = current.visibility;
+
+        weatherContent.innerHTML = `
+          <div class="weather-main">
+            <div class="temperature">${temp}°C</div>
+            <div class="condition">${condition}</div>
+            <div class="feels-like">Feels like ${feelsLike}°C</div>
+          </div>
+          <div class="weather-details">
+            <div class="humidity">Humidity: ${humidity}%</div>
+            <div class="wind">Wind: ${windSpeed} km/h ${windDir}</div>
+            <div class="pressure">Pressure: ${pressure} mb</div>
+            <div class="visibility">Visibility: ${visibility} km</div>
+          </div>
+        `;
+      } catch (error) {
+        document.querySelector('.weather-content').innerHTML = '<div class="error">Unable to load weather data</div>';
+      }
+    }
+
+    // Load weather on page load
+    fetchWeather();
+
+    // Refresh weather data every 2 minutes (120,000 ms)
+    setInterval(fetchWeather, 120000);
+  </script>
+</body>
+
+</html>
