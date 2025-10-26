@@ -191,5 +191,9 @@ function fetchWeather() {
 // Load weather on page load
 fetchWeather();
 
-// Refresh weather data every 3 minutes
-setInterval(fetchWeather, 180000);
+// Refresh weather data at every 5 minute mark, aligned to the clock
+setTimeout(function () {
+  fetchWeather();
+  setInterval(fetchWeather, 5 * 60 * 1000);
+}, (5 - new Date().getMinutes() % 5) * 60000 - new Date().getSeconds() * 1000 - new Date().getMilliseconds());
+
