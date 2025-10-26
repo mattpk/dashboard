@@ -152,16 +152,36 @@ function updateWeatherDisplay(current, nextPeriods) {
   });
 }
 
-// Fetch weather data for Toronto using wttr.in
-function fetchWeather() {
+function fetchWeatherData() {
+  const key = 'weatherCache';
+  const ttl = 3 * 60 * 1000;
+  try {
+    const c = JSON.parse(localStorage.getItem(key) || 'null');
+    if (c && c.data && Date.now() - c.timestamp < ttl) {
+      return Promise.resolve(c.data);
+    }
+  } catch (e) { }
   return fetch('https://wttr.in/Toronto?format=j1')
-    .then(response => response.json())
+    .then(r => r.json())
+    .then(data => {
+      try {
+        localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+      } catch (e) { }
+      return data;
+    });
+}
+
+function fetchWeather() {
+  return fetchWeatherData()
     .then(data => {
       const current = data.current_condition[0];
       // Get next 3 periods from both today and tomorrow
       const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
       updateWeatherDisplay(current, nextPeriods);
-      // console.log(data);
+    })
+    .then(() => {
+      // render emojis
+      twemoji.parse(document.body, { folder: 'svg', ext: '.svg' });
     })
     .catch(error => {
       console.error('Error fetching weather:', error);
