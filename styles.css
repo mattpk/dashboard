@@ -5,155 +5,63 @@
 }
 
 body {
+  height: 100vh;
   font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
-  color: #333;
-  line-height: 1.4;
-  margin: 0;
-  padding: 0;
-  width: 1024px;
-  height: 600px;
-  overflow: hidden;
+  background-color: #1a1a1a;
+  color: white;
 }
 
 .dashboard {
-  width: 1024px;
-  height: 600px;
-  margin: 0;
-  padding: 5px;
-  box-sizing: border-box;
+  height: 100vh;
+  width: 100vw;
 }
 
-
-main {
-  display: block;
-  height: 590px;
-  overflow-y: auto;
+.weather-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  height: 100vh;
+  gap: 0;
 }
 
-.weather-section {
-  background: white;
-  padding: 8px;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.weather-section h2 {
-  font-size: 1.2rem;
-  margin-bottom: 8px;
-  color: #34495e;
-}
-
-.weather-content {
-  font-size: 1.1rem;
-}
-
-.loading {
-  color: #7f8c8d;
-  font-style: italic;
-}
-
-.current-weather {
-  text-align: center;
-  margin-bottom: 10px;
-  padding: 6px;
-  background: #f8f9fa;
-  height: 80px;
+.weather-column {
   display: flex;
   flex-direction: column;
+  height: 100vh;
+  border-right: 1px solid #333;
+  text-align: center;
+}
+
+.weather-column:last-child {
+  border-right: none;
+}
+
+.weather-header {
+  font-size: 4rem;
+  font-weight: bold;
+  padding: 0.5rem 0;
+  background-color: #2a2a2a;
+  border-bottom: 1px solid #333;
+}
+
+.weather-icon {
+  font-size: 10rem;
+  padding: 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.current-icon {
+.weather-temp {
+  font-size: 10rem;
+  font-weight: bold;
+  padding: 0.5rem 0;
+  background-color: #2a2a2a;
+  border-top: 1px solid #333;
+}
+
+.weather-feels {
   font-size: 2.5rem;
-  margin-bottom: 2px;
+  padding: 0.5rem 0;
+  background-color: #1a1a1a;
 }
-
-.temperature {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #2c3e50;
-  margin-bottom: 2px;
-}
-
-.condition {
-  font-size: 0.9rem;
-  color: #34495e;
-  text-transform: capitalize;
-  margin-bottom: 2px;
-}
-
-.precipitation {
-  font-size: 0.8rem;
-  color: #7f8c8d;
-  font-weight: bold;
-}
-
-.hourly-forecast {
-  margin-bottom: 8px;
-}
-
-.hourly-forecast h3 {
-  font-size: 1rem;
-  color: #2c3e50;
-  margin-bottom: 5px;
-  text-align: center;
-}
-
-.hourly-grid {
-  display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 3px;
-  margin-bottom: 5px;
-}
-
-.hourly-item {
-  background: white;
-  padding: 3px;
-  text-align: center;
-  border: 1px solid #e9ecef;
-  height: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-
-.hour-time {
-  font-weight: bold;
-  color: #2c3e50;
-  font-size: 0.7rem;
-  margin-bottom: 1px;
-}
-
-.hour-icon {
-  font-size: 1.2rem;
-  margin-bottom: 1px;
-}
-
-.hour-temp {
-  font-size: 0.8rem;
-  font-weight: bold;
-  color: #e74c3c;
-  margin-bottom: 1px;
-}
-
-.hour-precip {
-  font-size: 0.7rem;
-  color: #3498db;
-  font-weight: bold;
-  margin-bottom: 1px;
-}
-
-.hour-desc {
-  font-size: 0.6rem;
-  color: #7f8c8d;
-  text-transform: capitalize;
-}
-
-.error {
-  color: #e74c3c;
-  font-style: italic;
-  text-align: center;
-}
-
-/* Optimized for 1024x600 tablet - no responsive design needed */
