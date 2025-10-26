@@ -51,12 +51,15 @@ function getWeatherIcon(weatherCode, weatherDesc, isNight = false) {
     '395': '⛈️'   // Moderate or heavy snow with thunder
   };
 
-  // Construct the night icon map using object spread (ES2015+)
-  const nightIconMap = {
-    ...dayIconMap,
-    '113': '🌙',  // Clear Night
-    '116': '☁️',  // Partly Cloudy Night (choose a different icon if desired)
-  };
+  // No object spread, manually copy and override
+  var nightIconMap = {};
+  for (var key in dayIconMap) {
+    if (dayIconMap.hasOwnProperty(key)) {
+      nightIconMap[key] = dayIconMap[key];
+    }
+  }
+  nightIconMap['113'] = '🌙'; // Clear Night
+  nightIconMap['116'] = '☁️'; // Partly Cloudy Night (choose a different icon if desired)
 
   // Fallback: When no code, make a best-guess using desc and isNight
   function fallback() {
