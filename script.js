@@ -83,6 +83,7 @@ function getWeatherIcon(weatherCode, weatherDesc, isNight = false) {
 
 // Get the next 4 morning, noon, evening, or night periods after current time, from today and tomorrow if needed
 function getNextNPeriods(weather, n = 4) {
+  const ONE_HOUR_BUFFER_MS = 60 * 60 * 1000;
   const wantedTimes = [0, 600, 1200, 1800];
   const periods = [];
   const now = new Date();
@@ -101,7 +102,7 @@ function getNextNPeriods(weather, n = 4) {
       h._datetime = new Date(year, month - 1, day, hourOfDay, 0, 0, 0);
 
       if (
-        h._datetime > now &&
+        h._datetime - now > ONE_HOUR_BUFFER_MS &&
         wantedTimes.includes(hourNum)
       ) {
         periods.push(h);
@@ -160,16 +161,15 @@ function fetchWeather() {
       // Get next 3 periods from both today and tomorrow
       const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
       updateWeatherDisplay(current, nextPeriods);
-      console.log(data);
+      // console.log(data);
     })
     .catch(error => {
       console.error('Error fetching weather:', error);
-      // Keep dummy data on error
     });
 }
 
 // Load weather on page load
 fetchWeather();
 
-// Refresh weather data every 2 minutes (120,000 ms)
-setInterval(fetchWeather, 120000);
+// Refresh weather data every 3 minutes
+setInterval(fetchWeather, 180000);
