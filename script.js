@@ -51,7 +51,7 @@ function getWeatherIcon(weatherCode, weatherDesc, isNight = false) {
     '395': '⛈️'   // Moderate or heavy snow with thunder
   };
 
-  // Night variant icons for certain codes (by convention, mostly differs for 'clear', 'partly cloudy')
+  // Construct the night icon map using object spread (ES2015+)
   const nightIconMap = {
     ...dayIconMap,
     '113': '🌙',  // Clear Night
@@ -84,11 +84,16 @@ function getNextNPeriods(weather, n = 4) {
   const periods = [];
   const now = new Date();
 
-  for (const w of weather) {
-    for (const h of w.hourly) {
+  for (let i = 0; i < weather.length; i++) {
+    const w = weather[i];
+    for (let j = 0; j < w.hourly.length; j++) {
+      const h = w.hourly[j];
       const date = w.date;
       const hourNum = parseInt(h.time, 10);
-      const [year, month, day] = date.split('-').map(x => parseInt(x, 10));
+      const dateParts = date.split('-').map(x => parseInt(x, 10));
+      const year = dateParts[0];
+      const month = dateParts[1];
+      const day = dateParts[2];
       const hourOfDay = Math.floor(hourNum / 100);
       h._datetime = new Date(year, month - 1, day, hourOfDay, 0, 0, 0);
 
@@ -144,20 +149,20 @@ function updateWeatherDisplay(current, nextPeriods) {
 }
 
 // Fetch weather data for Toronto using wttr.in
-async function fetchWeather() {
-  try {
-    const response = await fetch('https://wttr.in/Toronto?format=j1');
-    const data = await response.json();
-
-    const current = data.current_condition[0];
-    // Get next 3 periods from both today and tomorrow
-    const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
-    updateWeatherDisplay(current, nextPeriods);
-    console.log(data);
-  } catch (error) {
-    console.error('Error fetching weather:', error);
-    // Keep dummy data on error
-  }
+function fetchWeather() {
+  return fetch('https://wttr.in/Toronto?format=j1')
+    .then(response => response.json())
+    .then(data => {
+      const current = data.current_condition[0];
+      // Get next 3 periods from both today and tomorrow
+      const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
+      updateWeatherDisplay(current, nextPeriods);
+      console.log(data);
+    })
+    .catch(error => {
+      console.error('Error fetching weather:', error);
+      // Keep dummy data on error
+    });
 }
 
 // Load weather on page load
