@@ -1,50 +1,306 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard</title>
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="utf-8" />
+  <title>Weather Emoji Render Test</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 18px;
+      background: #f7f7f8;
+      color: #111;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, .08);
+    }
+
+    th,
+    td {
+      padding: 10px 12px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+      vertical-align: middle;
+    }
+
+    th {
+      background: #fafafa;
+      font-weight: 600;
+      font-size: 13px;
+      color: #333;
+    }
+
+    td.emoji {
+      font-size: 54px;
+      width: 120px;
+      text-align: center;
+    }
+
+    td.code {
+      font-family: "Courier New", Monaco, monospace;
+      font-size: 14px;
+      width: 90px;
+    }
+
+    td.cp {
+      font-family: "Courier New", monospace;
+      color: #555;
+    }
+
+    caption {
+      padding: 10px;
+      text-align: left;
+      color: #666;
+      font-size: 13px;
+    }
+
+    .note {
+      margin-top: 12px;
+      color: #444;
+      font-size: 13px;
+    }
+
+    .bad {
+      background: #fff8f0;
+    }
+
+    .ok {
+      background: #f8fff6;
+    }
+
+    .row-desc {
+      color: #666;
+      font-size: 12px;
+    }
+
+    .controls {
+      margin-bottom: 10px;
+    }
+
+    button {
+      margin-right: 8px;
+      padding: 6px 10px;
+      font-size: 13px;
+    }
+  </style>
 </head>
 
 <body>
-  <div class="dashboard">
-    <main class="weather-grid">
-      <!-- Morning Column -->
-      <div class="weather-column">
-        <div class="weather-header">-</div>
-        <div class="weather-icon">-</div>
-        <div class="weather-temp">-</div>
-        <div class="weather-feels">FL: -</div>
-      </div>
-
-      <!-- Noon Column -->
-      <div class="weather-column">
-        <div class="weather-header">-</div>
-        <div class="weather-icon">-</div>
-        <div class="weather-temp">-</div>
-        <div class="weather-feels">FL: -</div>
-      </div>
-
-      <!-- Evening Column -->
-      <div class="weather-column">
-        <div class="weather-header">-</div>
-        <div class="weather-icon">-</div>
-        <div class="weather-temp">-</div>
-        <div class="weather-feels">FL: -</div>
-      </div>
-
-      <!-- Night Column -->
-      <div class="weather-column">
-        <div class="weather-header">-</div>
-        <div class="weather-icon">-</div>
-        <div class="weather-temp">-</div>
-        <div class="weather-feels">FL: -</div>
-      </div>
-    </main>
+  <h1>Weather Emoji Render Test — dayIconMap</h1>
+  <div class="controls">
+    <button id="large">Large icons</button>
+    <button id="normal">Normal icons</button>
+    <button id="toggleCodepoints">Toggle codepoints</button>
   </div>
 
-  <script src="script.js"></script>
+  <table id="emojiTable" aria-describedby="desc">
+    <caption id="desc">This table shows each weather code, the emoji from your dayIconMap, and decoded Unicode
+      codepoint(s). On old devices missing glyphs often show as boxes or not rendered correctly.</caption>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Emoji</th>
+        <th>Unicode codepoint(s)</th>
+        <th>Comment / meaning</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <p class="note">
+    Tip: open this file on the target device (Chrome 59). If an emoji appears as an empty box, question mark, or
+    otherwise odd, note the code and consider replacing it with a more compatible glyph (e.g. 🌧️ or ❄️).
+  </p>
+
+  <script>
+    // The dayIconMap from your code (codes as strings)
+    const dayIconMap = {
+      '113': '☀️',  // Clear/Sunny
+      '116': '⛅',  // Partly Cloudy
+      '119': '☁️',  // Cloudy
+      '122': '☁️',  // Overcast
+      '143': '🌫️',  // Mist
+      '176': '🌦️',  // Patchy rain nearby
+      '179': '🌧️',  // Patchy snow nearby
+      '182': '🌧️',  // Patchy sleet nearby
+      '185': '🌧️',  // Patchy freezing drizzle nearby
+      '200': '⛈️',  // Thundery outbreaks nearby
+      '227': '❄️',  // Blowing snow
+      '230': '❄️',  // Blizzard
+      '248': '🌫️',  // Fog
+      '260': '🌫️',  // Freezing fog
+      '263': '🌦️',  // Patchy light drizzle
+      '266': '🌧️',  // Light drizzle
+      '281': '🌧️',  // Freezing drizzle
+      '284': '🌧️',  // Heavy freezing drizzle
+      '293': '🌦️',  // Patchy light rain
+      '296': '🌧️',  // Light rain
+      '299': '🌧️',  // Moderate rain at times
+      '302': '🌧️',  // Moderate rain
+      '305': '🌧️',  // Heavy rain at times
+      '308': '🌧️',  // Heavy rain
+      '311': '🌧️',  // Light freezing rain
+      '314': '🌧️',  // Moderate or heavy freezing rain
+      '317': '🌧️',  // Light sleet
+      '320': '🌧️',  // Moderate or heavy sleet
+      '323': '❄️',  // Patchy light snow
+      '326': '❄️',  // Light snow
+      '329': '❄️',  // Patchy moderate snow
+      '332': '❄️',  // Moderate snow
+      '335': '❄️',  // Patchy heavy snow
+      '338': '❄️',  // Heavy snow
+      '350': '🌧️',  // Ice pellets
+      '353': '🌦️',  // Light rain shower
+      '356': '🌧️',  // Moderate or heavy rain shower
+      '359': '🌧️',  // Torrential rain shower
+      '362': '🌧️',  // Light sleet showers
+      '365': '🌧️',  // Moderate or heavy sleet showers
+      '368': '❄️',  // Light snow showers
+      '371': '❄️',  // Moderate or heavy snow showers
+      '374': '🌧️',  // Light showers of ice pellets
+      '377': '🌧️',  // Moderate or heavy showers of ice pellets
+      '386': '⛈️',  // Patchy light rain with thunder
+      '389': '⛈️',  // Moderate or heavy rain with thunder
+      '392': '⛈️',  // Patchy light snow with thunder
+      '395': '⛈️'   // Moderate or heavy snow with thunder
+    };
+
+    const tbody = document.querySelector('#emojiTable tbody');
+
+    function toCodepoints(str) {
+      // Split into codepoints (handles surrogate pairs)
+      const cps = Array.from(str).map(ch => {
+        const cp = ch.codePointAt(0).toString(16).toUpperCase();
+        return 'U+' + cp.padStart(4, '0');
+      });
+      return cps.join(' ');
+    }
+
+    function isLikelyMissingGlyph(cell) {
+      // quick heuristic: if computed width of emoji char equals width of fallback box
+      // this is not perfect; we'll instead detect common replacement characters:
+      const txt = cell.textContent;
+      // If it contains Unicode Replacement Character (U+FFFD), or a generic fallback glyph
+      if (txt.includes('\uFFFD')) return true;
+      // Also check for ASCII-like placeholder symbols often used in fonts
+      if (/[\u25A1\u25A0\u2753\u2754\u2755]/.test(txt)) return true;
+      return false;
+    }
+
+    // Build table rows
+    Object.keys(dayIconMap).sort((a, b) => parseInt(a) - parseInt(b)).forEach(code => {
+      const emoji = dayIconMap[code];
+      const tr = document.createElement('tr');
+      const tdCode = document.createElement('td');
+      tdCode.className = 'code';
+      tdCode.textContent = code;
+
+      const tdEmoji = document.createElement('td');
+      tdEmoji.className = 'emoji';
+      tdEmoji.textContent = emoji;
+
+      const tdCp = document.createElement('td');
+      tdCp.className = 'cp';
+      tdCp.textContent = toCodepoints(emoji);
+
+      // Extract comment/meaning from the inline comment list if present in mapping comments above
+      // (we don't have access to the original comments programatically here, so use a small map for display.)
+      const meanings = {
+        '113': 'Clear / Sunny',
+        '116': 'Partly Cloudy',
+        '119': 'Cloudy',
+        '122': 'Overcast',
+        '143': 'Mist',
+        '176': 'Patchy rain nearby',
+        '179': 'Patchy snow nearby',
+        '182': 'Patchy sleet nearby',
+        '185': 'Patchy freezing drizzle nearby',
+        '200': 'Thundery outbreaks nearby',
+        '227': 'Blowing snow',
+        '230': 'Blizzard',
+        '248': 'Fog',
+        '260': 'Freezing fog',
+        '263': 'Patchy light drizzle',
+        '266': 'Light drizzle',
+        '281': 'Freezing drizzle',
+        '284': 'Heavy freezing drizzle',
+        '293': 'Patchy light rain',
+        '296': 'Light rain',
+        '299': 'Moderate rain at times',
+        '302': 'Moderate rain',
+        '305': 'Heavy rain at times',
+        '308': 'Heavy rain',
+        '311': 'Light freezing rain',
+        '314': 'Moderate or heavy freezing rain',
+        '317': 'Light sleet',
+        '320': 'Moderate or heavy sleet',
+        '323': 'Patchy light snow',
+        '326': 'Light snow',
+        '329': 'Patchy moderate snow',
+        '332': 'Moderate snow',
+        '335': 'Patchy heavy snow',
+        '338': 'Heavy snow',
+        '350': 'Ice pellets',
+        '353': 'Light rain shower',
+        '356': 'Moderate or heavy rain shower',
+        '359': 'Torrential rain shower',
+        '362': 'Light sleet showers',
+        '365': 'Moderate or heavy sleet showers',
+        '368': 'Light snow showers',
+        '371': 'Moderate or heavy snow showers',
+        '374': 'Light showers of ice pellets',
+        '377': 'Moderate or heavy showers of ice pellets',
+        '386': 'Patchy light rain with thunder',
+        '389': 'Moderate or heavy rain with thunder',
+        '392': 'Patchy light snow with thunder',
+        '395': 'Moderate or heavy snow with thunder'
+      };
+
+      const tdMeaning = document.createElement('td');
+      tdMeaning.className = 'row-desc';
+      tdMeaning.textContent = meanings[code] || '';
+
+      tr.appendChild(tdCode);
+      tr.appendChild(tdEmoji);
+      tr.appendChild(tdCp);
+      tr.appendChild(tdMeaning);
+
+      tbody.appendChild(tr);
+
+      // Mark row background if glyph likely missing — do a quick deferred check
+      requestAnimationFrame(() => {
+        if (isLikelyMissingGlyph(tdEmoji)) {
+          tr.classList.add('bad');
+        } else {
+          tr.classList.add('ok');
+        }
+      });
+    });
+
+    // Controls
+    document.getElementById('large').addEventListener('click', () => {
+      document.querySelectorAll('td.emoji').forEach(td => td.style.fontSize = '90px');
+    });
+    document.getElementById('normal').addEventListener('click', () => {
+      document.querySelectorAll('td.emoji').forEach(td => td.style.fontSize = '54px');
+    });
+    let cpShown = true;
+    document.getElementById('toggleCodepoints').addEventListener('click', () => {
+      cpShown = !cpShown;
+      document.querySelectorAll('td.cp').forEach(td => td.style.display = cpShown ? '' : 'none');
+    });
+
+  </script>
 </body>
 
 </html>
