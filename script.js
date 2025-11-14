@@ -160,47 +160,46 @@ function fetchWeatherData() {
     if (c && c.data && Date.now() - c.timestamp < ttl) {
       return Promise.resolve(c.data);
     }
-  } catch (e) { }
-  // http to support old android browser
-  return fetch('http://wttr.in/Toronto?format=j1')
-    .then(r => r.json())
-    .then(data => {
-      try {
-        localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
-      } catch (e) {
-        alert("LocalStorage error: " + (e && e.message ? e.message : e));
-      }
-      return data;
-    })
-    .catch(error => {
-      alert("Fetch error: " + (error && error.message ? error.message : error));
-      throw error; // Rethrow so downstream knows
-    });
-}
+  } catch (e) {
+    return fetch('https://wttr.in/Toronto?format=j1')
+      .then(r => r.json())
+      .then(data => {
+        try {
+          localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
+        } catch (e) {
+          alert("LocalStorage error: " + (e && e.message ? e.message : e));
+        }
+        return data;
+      })
+      .catch(error => {
+        alert("Fetch error: " + (error && error.message ? error.message : error));
+        throw error; // Rethrow so downstream knows
+      });
+  }
 
-function fetchWeather() {
-  return fetchWeatherData()
-    .then(data => {
-      const current = data.current_condition[0];
-      // Get next 3 periods from both today and tomorrow
-      const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
-      updateWeatherDisplay(current, nextPeriods);
-    })
-    .then(() => {
-      // render emojis
-      twemoji.parse(document.body, { folder: 'svg', ext: '.svg' });
-    })
-    .catch(error => {
-      console.error('Error fetching weather:', error);
-    });
-}
+  function fetchWeather() {
+    return fetchWeatherData()
+      .then(data => {
+        const current = data.current_condition[0];
+        // Get next 3 periods from both today and tomorrow
+        const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
+        updateWeatherDisplay(current, nextPeriods);
+      })
+      .then(() => {
+        // render emojis
+        twemoji.parse(document.body, { folder: 'svg', ext: '.svg' });
+      })
+      .catch(error => {
+        console.error('Error fetching weather:', error);
+      });
+  }
 
-// Load weather on page load
-fetchWeather();
-
-// Refresh weather data at every 5 minute mark, aligned to the clock
-setTimeout(function () {
+  // Load weather on page load
   fetchWeather();
-  setInterval(fetchWeather, 5 * 60 * 1000);
-}, (5 - new Date().getMinutes() % 5) * 60000 - new Date().getSeconds() * 1000 - new Date().getMilliseconds());
+
+  // Refresh weather data at every 5 minute mark, aligned to the clock
+  setTimeout(function () {
+    fetchWeather();
+    setInterval(fetchWeather, 5 * 60 * 1000);
+  }, (5 - new Date().getMinutes() % 5) * 60000 - new Date().getSeconds() * 1000 - new Date().getMilliseconds());
 
