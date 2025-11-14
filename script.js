@@ -167,8 +167,14 @@ function fetchWeatherData() {
     .then(data => {
       try {
         localStorage.setItem(key, JSON.stringify({ data, timestamp: Date.now() }));
-      } catch (e) { }
+      } catch (e) {
+        alert("LocalStorage error: " + (e && e.message ? e.message : e));
+      }
       return data;
+    })
+    .catch(error => {
+      alert("Fetch error: " + (error && error.message ? error.message : error));
+      throw error; // Rethrow so downstream knows
     });
 }
 
