@@ -7,9 +7,5 @@ It's for my own usecase, so hardcoded for a 1024x600 resolution tablet
 if having the server cache weather instead of the client, run on server
 
 ```
-chmod +x fetch_weather.py
-```
-
-```
-nohup ./fetch_weather.py &
+forever stop fetch_weather.py && forever start fetch_weather.py
 ```

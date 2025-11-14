@@ -1,4 +1,6 @@
-#!/usr/bin/env python3
+#!/bin/bash
+'''exec' python3 "$0" "$@"
+' '''
 import time
 import json
 import urllib.request
