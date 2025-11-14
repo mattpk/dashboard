@@ -1,9 +1,12 @@
-#!/bin/bash
-'''exec' python3 "$0" "$@"
-' '''
+#!/usr/bin/env python3
 import time
 import json
-import urllib.request
+import sys
+
+try:
+    from urllib.request import urlopen
+except ImportError:
+    from urllib2 import urlopen
 
 URL = "https://wttr.in/Toronto?format=j1"
 OUTPUT_FILE = "weather.json"
@@ -11,13 +14,19 @@ INTERVAL = 300  # 5 minutes
 
 def fetch_weather():
     try:
-        with urllib.request.urlopen(URL, timeout=10) as response:
-            data = json.load(response)
-        with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        response = urlopen(URL, timeout=10)
+        try:
+            if sys.version_info[0] >= 3:
+                data = json.load(response)
+            else:
+                data = json.load(response)
+        finally:
+            response.close()
+        with open(OUTPUT_FILE, "w") as f:
             json.dump(data, f, indent=2)
-        print(f"Updated {OUTPUT_FILE}")
+        print("Updated {}".format(OUTPUT_FILE))
     except Exception as e:
-        print(f"Error fetching weather: {e}")
+        print("Error fetching weather: {}".format(e))
 
 def main():
     while True:
