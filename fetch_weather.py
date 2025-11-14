@@ -16,10 +16,10 @@ def fetch_weather():
     try:
         response = urlopen(URL, timeout=10)
         try:
-            if sys.version_info[0] >= 3:
-                data = json.load(response)
-            else:
-                data = json.load(response)
+            raw = response.read()
+            if sys.version_info[0] >= 3 and isinstance(raw, bytes):
+                raw = raw.decode("utf-8")
+            data = json.loads(raw)
         finally:
             response.close()
         with open(OUTPUT_FILE, "w") as f:
