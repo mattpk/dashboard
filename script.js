@@ -154,7 +154,7 @@ function updateWeatherDisplay(current, nextPeriods) {
 
 function fetchWeatherData() {
   const key = 'weatherCache';
-  const ttl = 3 * 60 * 1000;
+  const ttl = 10 * 60 * 1000;
   try {
     const c = JSON.parse(localStorage.getItem(key) || 'null');
     if (c && c.data && Date.now() - c.timestamp < ttl) {
