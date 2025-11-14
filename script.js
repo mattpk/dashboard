@@ -161,7 +161,8 @@ function fetchWeatherData() {
       return Promise.resolve(c.data);
     }
   } catch (e) { }
-  return fetch('https://wttr.in/Toronto?format=j1')
+  // http to support old android browser
+  return fetch('http://wttr.in/Toronto?format=j1')
     .then(r => r.json())
     .then(data => {
       try {
