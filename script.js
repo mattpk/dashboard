@@ -142,12 +142,12 @@ function updateWeatherDisplay(current, nextPeriods) {
     // Handle current period (current has slightly different structure)
     if (index === 0) {
       header.textContent = "NOW";
-      temp.textContent = current.temp_C || current.tempC;
-      feels.textContent = `FL: ${current.FeelsLikeC}`;
+      temp.textContent = parseInt(current.temp_C || current.tempC, 10) + 0;
+      feels.textContent = `FL: ${parseInt(current.FeelsLikeC, 10) + 0}`;
     } else {
       header.textContent = periodLabels[hour];
-      temp.textContent = data.tempC;
-      feels.textContent = `FL: ${data.FeelsLikeC}`;
+      temp.textContent = parseInt(data.tempC, 10) + 0;
+      feels.textContent = `FL: ${parseInt(data.FeelsLikeC, 10) + 0}`;
     }
   });
 }
