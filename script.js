@@ -213,3 +213,5 @@ setTimeout(function () {
   setInterval(fetchWeather, 5 * 60 * 1000);
 }, (5 - new Date().getMinutes() % 5) * 60000 - new Date().getSeconds() * 1000 - new Date().getMilliseconds());
 
+// Refresh daily to prevent accumated memory leaks on old browser
+setTimeout(() => location.reload(), 24 * 60 * 60 * 1000);
