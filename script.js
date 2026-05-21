@@ -236,7 +236,6 @@ function fetchOneStop({ route, stopCode }) {
 
 function renderTransitCells(footer, results) {
   footer.innerHTML = '';
-  footer.style.display = results.length ? 'grid' : 'none';
   for (const stop of results) {
     const cell = document.createElement('div');
     cell.className = 'transit-cell';
@@ -253,7 +252,7 @@ function fetchTransit() {
   const footer = document.querySelector('.transit-grid');
   if (!footer) return;
   const stops = getStopsFromUrl();
-  if (!stops.length) { footer.innerHTML = ''; footer.style.display = 'none'; return; }
+  if (!stops.length) return;
   renderTransitCells(footer, stops.map(s => ({ route: s.route, stopCode: s.stopCode, minutes: [] })));
   return Promise.all(stops.map(fetchOneStop))
     .then(results => renderTransitCells(footer, results))
