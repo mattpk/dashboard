@@ -207,7 +207,7 @@ function fetchWeather() {
 // Parse ?stops=route:stopCode,route:stopCode,... (max 3)
 function getStopsFromUrl() {
   const raw = new URLSearchParams(location.search).get('stops') || '';
-  return raw.split(',')
+  return raw.split(/[,;]/)
     .map(s => s.trim())
     .filter(Boolean)
     .map(s => {
