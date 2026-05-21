@@ -50,7 +50,7 @@ body {
 }
 
 .weather-icon {
-  padding: 0.75rem;
+  padding: 2rem;
   flex: 1;
   min-height: 0;
   display: flex;
