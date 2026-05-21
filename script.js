@@ -235,17 +235,22 @@ function fetchOneStop({ route, stopCode }) {
 }
 
 function renderTransitCells(footer, results) {
-  footer.innerHTML = '';
-  for (const stop of results) {
-    const cell = document.createElement('div');
-    cell.className = 'transit-cell';
+  const existing = footer.querySelectorAll('.transit-cell');
+  results.forEach(function(stop, i) {
     const mins = stop.minutes && stop.minutes.length
       ? stop.minutes.join(' ')
       : '\u2014';
-    cell.innerHTML =
+    const html =
       `<div class="transit-arrivals"><span class="transit-route">${stop.route}</span> ${mins}</div>`;
-    footer.appendChild(cell);
-  }
+    if (existing[i]) {
+      existing[i].innerHTML = html;
+    } else {
+      const cell = document.createElement('div');
+      cell.className = 'transit-cell';
+      cell.innerHTML = html;
+      footer.appendChild(cell);
+    }
+  });
 }
 
 function fetchTransit() {
@@ -253,7 +258,9 @@ function fetchTransit() {
   if (!footer) return;
   const stops = getStopsFromUrl();
   if (!stops.length) return;
-  renderTransitCells(footer, stops.map(s => ({ route: s.route, stopCode: s.stopCode, minutes: [] })));
+  if (!footer.querySelector('.transit-cell')) {
+    renderTransitCells(footer, stops.map(s => ({ route: s.route, stopCode: s.stopCode, minutes: [] })));
+  }
   return Promise.all(stops.map(fetchOneStop))
     .then(results => renderTransitCells(footer, results))
     .catch(err => console.error('transit fetch failed:', err));
