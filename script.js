@@ -143,11 +143,11 @@ function updateWeatherDisplay(current, nextPeriods) {
     if (index === 0) {
       header.textContent = "NOW";
       temp.textContent = parseInt(current.temp_C || current.tempC, 10) + 0;
-      feels.textContent = `FL: ${parseInt(current.FeelsLikeC, 10) + 0}`;
+      feels.textContent = `FL ${parseInt(current.FeelsLikeC, 10) + 0}`;
     } else {
       header.textContent = periodLabels[hour];
       temp.textContent = parseInt(data.tempC, 10) + 0;
-      feels.textContent = `FL: ${parseInt(data.FeelsLikeC, 10) + 0}`;
+      feels.textContent = `FL ${parseInt(data.FeelsLikeC, 10) + 0}`;
     }
   });
 }
@@ -192,7 +192,7 @@ function fetchWeather() {
     .then(data => {
       const current = data.current_condition[0];
       // Get next 3 periods from both today and tomorrow
-      const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1]], 3);
+      const nextPeriods = getNextNPeriods([data.weather[0], data.weather[1], data.weather[2]], 3);
       updateWeatherDisplay(current, nextPeriods);
     })
     .then(() => {
@@ -204,8 +204,63 @@ function fetchWeather() {
     });
 }
 
+// Parse ?stops=route:stopCode,route:stopCode,... (max 3)
+function getStopsFromUrl() {
+  const raw = new URLSearchParams(location.search).get('stops') || '';
+  return raw.split(',')
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(s => {
+      const [route, stopCode] = s.split(':');
+      return route && stopCode ? { route, stopCode } : null;
+    })
+    .filter(Boolean)
+    .slice(0, 3);
+}
+
+function fetchOneStop({ route, stopCode }) {
+  const url = `https://www.ttc.ca/ttcapi/routedetail/GetNextBuses?routeId=${encodeURIComponent(route)}&stopCode=${encodeURIComponent(stopCode)}`;
+  return fetch(url)
+    .then(r => r.ok ? r.json() : [])
+    .then(arr => ({
+      route,
+      stopCode,
+      minutes: (Array.isArray(arr) ? arr : [])
+        .map(x => parseInt(x.nextBusMinutes, 10))
+        .filter(n => Number.isFinite(n) && n >= 0)
+        .slice(0, 3),
+    }))
+    .catch(() => ({ route, stopCode, minutes: [] }));
+}
+
+function renderTransitCells(footer, results) {
+  footer.innerHTML = '';
+  for (const stop of results) {
+    const cell = document.createElement('div');
+    cell.className = 'transit-cell';
+    const mins = stop.minutes && stop.minutes.length
+      ? stop.minutes.join(' ')
+      : '—';
+    cell.innerHTML =
+      `<div class="transit-arrivals"><span class="transit-route">${stop.route}</span> ${mins}</div>`;
+    footer.appendChild(cell);
+  }
+}
+
+function fetchTransit() {
+  const footer = document.querySelector('.transit-grid');
+  if (!footer) return;
+  const stops = getStopsFromUrl();
+  if (!stops.length) { footer.innerHTML = ''; return; }
+  renderTransitCells(footer, stops.map(s => ({ route: s.route, stopCode: s.stopCode, minutes: [] })));
+  return Promise.all(stops.map(fetchOneStop))
+    .then(results => renderTransitCells(footer, results))
+    .catch(err => console.error('transit fetch failed:', err));
+}
+
 // Load weather on page load
 fetchWeather();
+fetchTransit();
 
 // Refresh weather data at every 5 minute mark, aligned to the clock
 setTimeout(function () {
@@ -213,5 +268,8 @@ setTimeout(function () {
   setInterval(fetchWeather, 5 * 60 * 1000);
 }, (5 - new Date().getMinutes() % 5) * 60000 - new Date().getSeconds() * 1000 - new Date().getMilliseconds());
 
-// Refresh daily to prevent accumated memory leaks on old browser
+// Refresh transit every 30 seconds
+setInterval(fetchTransit, 30 * 1000);
+
+// Refresh page daily to prevent accumated memory leaks on old browser
 setTimeout(() => location.reload(), 24 * 60 * 60 * 1000);
