@@ -82,16 +82,12 @@ body {
 }
 
 .transit-grid {
-  display: grid;
+  display: none;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
   height: 10vh;
   background-color: #2a2a2a;
   border-top: 2px solid #333;
-}
-
-.transit-grid:empty {
-  display: none;
 }
 
 .transit-cell {
