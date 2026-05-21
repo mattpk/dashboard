@@ -242,7 +242,7 @@ function renderTransitCells(footer, results) {
     cell.className = 'transit-cell';
     const mins = stop.minutes && stop.minutes.length
       ? stop.minutes.join(' ')
-      : '—';
+      : '\u2014';
     cell.innerHTML =
       `<div class="transit-arrivals"><span class="transit-route">${stop.route}</span> ${mins}</div>`;
     footer.appendChild(cell);
